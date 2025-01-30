@@ -254,6 +254,7 @@ if submit_button:
             # Display the latest stock data
             st.subheader("📃 Latest Stock Data")
             st.dataframe(stock_history.tail(5))  # Show the last 5 rows
+            st.write("---")
             ##########################################################################################
             stock_history['Date'] = stock_history['Date'].dt.date  # Ensure Date is in the correct format
             print("Stock market data fetched successfully.")
@@ -355,7 +356,7 @@ if submit_button:
     
     # Print the real predicted price
     print(f"Real Predicted Next Closing Price: {predicted_prices_real[-1]}")
-    st.write(f"Real Predicted Next Closing Price: {predicted_prices_real[-1]}")
+    st.subheader(f"💹Real Predicted Next Closing Price: RM{predicted_prices_real[-1]}")
     
     import matplotlib.pyplot as plt
     
