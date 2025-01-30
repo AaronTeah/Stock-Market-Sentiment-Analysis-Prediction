@@ -244,11 +244,11 @@ if submit_button:
 
             # Add candlestick chart
             fig.add_trace(go.Candlestick(
-                x=df["Date"],
-                open=df["Open"],
-                high=df["High"],
-                low=df["Low"],
-                close=df["Close"],
+                x=stock_history["Date"],
+                open=stock_history["Open"],
+                high=stock_history["High"],
+                low=stock_history["Low"],
+                close=stock_history["Close"],
                 name="Candlestick"
             ))
 
