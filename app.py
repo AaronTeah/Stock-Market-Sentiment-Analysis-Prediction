@@ -160,4 +160,64 @@ if submit_button:
     except Exception as e:
         st.error(f"❌ Error loading CSV: {e}")
 
+    #############################Sentiment Analysis################################
+    # Load the dataset
+    file_path = 'scraped_articles.csv'
+    data = pd.read_csv(file_path)
+
+    from transformers import AutoTokenizer, AutoModelForSequenceClassification
+    import torch
     
+    # Load the saved model and tokenizer
+    model_path = "StephanAkkerman/FinTwitBERT-sentiment"  
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    model = AutoModelForSequenceClassification.from_pretrained(model_path)
+
+    def analyze_sentiment(text):
+        inputs = tokenizer(text, return_tensors="pt", truncation=True, padding="max_length", max_length=256)
+        with torch.no_grad():
+            outputs = model(**inputs)
+        logits = outputs.logits
+        probabilities = torch.nn.functional.softmax(logits, dim=1)  # Convert logits to probabilities
+        
+        # Extract probabilities for each sentiment
+        positive = probabilities[0][1].item()
+        neutral = probabilities[0][0].item()
+        negative = probabilities[0][2].item()
+        
+        # Calculate custom sentiment score
+        score = positive - negative
+        
+        return positive, neutral, negative, score
+        
+        # Assuming the text data is in the 'content' column
+        data['positive'], data['neutral'], data['negative'], data['score'] = zip(*data['combined_text'].apply(analyze_sentiment))
+        # Add entry count for each row
+        data['entry_count'] = 1
+        sentiment_data_path = "sentiment_analysis_results.csv"
+        data.to_csv(sentiment_data_path, index=False)
+
+        # Load the CSV file
+        file_path = "sentiment_analysis_results.csv" 
+        df = pd.read_csv(file_path)
+        
+        # Remove unnecessary columns
+        columns_to_remove = ['title', 'detail', 'combined_text']
+        df = df.drop(columns=[col for col in columns_to_remove if col in df.columns], errors='ignore')
+        
+        # Convert the date column to a proper datetime format, extracting only the date part
+        df['Date'] = pd.to_datetime(df['Date']).dt.date
+        
+        # Group by date and calculate the average for sentiment scores
+        aggregated_df = df.groupby('Date', as_index=False).mean()
+        
+        # Save the processed data to a new CSV file
+        processed_sentiment_analysis = "/content/drive/MyDrive/NLP Project/processed_sentiment_analysis.csv"
+        aggregated_df.to_csv(processed_sentiment_analysis, index=False)
+        
+        # Display the processed dataframe
+        st.write(aggregated_df.head())  # Display the first few rows
+        st.write(f"Processed CSV file saved at: {processed_sentiment_analysis}")
+
+        
+
