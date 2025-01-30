@@ -206,19 +206,27 @@ if submit_button:
         # Sort by date (latest first) and get the top 5 latest unique news
         latest_news = df.sort_values(by='Date', ascending=False).head(5)
     
-        # Display the latest 5 news articles
-        st.subheader("📰 Latest 5 News Articles with Sentiment Scores")
+    # Streamlit App Title
+    st.subheader("📊 Sentiment Scores of Latest 5 News Articles")
+    
+    # Sort by date to get the latest news
+    data['Date'] = pd.to_datetime(data['Date'], errors='coerce')
+    data = data.sort_values(by='Date', ascending=False).head(5)
+    
+    # Display the first 5 news articles along with their sentiment scores
+    for i, row in data.iterrows():
+        st.markdown(f"### {i+1}. {row['title']}")
+        st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
+        st.write(f"📰 **Summary:** {row['detail']}")
         
-        for i, row in latest_news.iterrows():
-            st.markdown(f"### {i+1}. {row['title']}")
-            st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
-            st.write(f"📰 **Summary:** {row['detail']}")
-            st.write(f"💬 **Sentiment Score:** `{row['score']:.4f}`")
-            st.write(f"👍 **Positive:** `{row['positive']:.2f}` | 😐 **Neutral:** `{row['neutral']:.2f}` | 👎 **Negative:** `{row['negative']:.2f}`")
-            st.write("---")  # Divider between articles
-
+        # Display Sentiment Scores
+        st.write(f"📈 **Positive Sentiment:** {row['positive']:.2f}")
+        st.write(f"⚖ **Neutral Sentiment:** {row['neutral']:.2f}")
+        st.write(f"📉 **Negative Sentiment:** {row['negative']:.2f}")
+        st.write(f"🧮 **Overall Sentiment Score:** {row['score']:.2f}")
+        st.write("---")  # Divider for clarity
 
     except Exception as e:
         st.error(f"❌ Error loading CSV: {e}")
         
-
+#st.write(f"👍 **Positive:** `{row['positive']:.2f}` | 😐 **Neutral:** `{row['neutral']:.2f}` | 👎 **Negative:** `{row['negative']:.2f}`")
