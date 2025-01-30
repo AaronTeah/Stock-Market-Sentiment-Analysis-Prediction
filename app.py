@@ -236,6 +236,24 @@ if submit_button:
         else:
             # Reset index to make Date a column for merging
             stock_history.reset_index(inplace=True)
+            ##########################################################################################
+            # Plot the stock market price
+            st.subheader(f"📊 Stock Price Chart for {stock_code}")
+            fig, ax = plt.subplots(figsize=(10, 5))
+            ax.plot(stock_history["Date"], stock_history["Close"], label="Closing Price", linewidth=2)
+            ax.set_xlabel("Date")
+            ax.set_ylabel("Stock Price")
+            ax.set_title(f"{stock_code} Stock Market Trend")
+            ax.legend()
+            ax.grid()
+
+            # Show the chart in Streamlit
+            st.pyplot(fig)
+
+            # Display the latest stock data
+            st.subheader("📃 Latest Stock Data")
+            st.dataframe(stock_history.tail(5))  # Show the last 5 rows
+            ##########################################################################################
             stock_history['Date'] = stock_history['Date'].dt.date  # Ensure Date is in the correct format
             print("Stock market data fetched successfully.")
     except Exception as e:
