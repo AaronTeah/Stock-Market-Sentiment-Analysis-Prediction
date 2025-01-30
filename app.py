@@ -280,87 +280,88 @@ if submit_button:
         print(f"Error combining data: {e}")
 
 ######################################Stock Price Prediction#########################################
-import torch
-import torch.nn as nn
-
-# Transformer Model Definition
-class TransformerModel(nn.Module):
-    def __init__(self, input_dim, embed_dim, num_heads, num_layers, dropout):
-        super(TransformerModel, self).__init__()
-        self.embedding = nn.Linear(input_dim, embed_dim)
-        self.positional_encoding = nn.Parameter(torch.zeros(1, sequence_length, embed_dim))
-        self.transformer = nn.TransformerEncoder(
-            nn.TransformerEncoderLayer(embed_dim, num_heads, dropout=dropout),
-            num_layers
-        )
-        self.fc = nn.Linear(embed_dim, 1)
-
-    def forward(self, x):
-        x = self.embedding(x) + self.positional_encoding
-        x = self.transformer(x)
-        x = x.mean(dim=1)
-        return self.fc(x)
-# Define Model Parameters (same as original training setup)
-input_dim = 5  # Ensure it matches your feature count
-embed_dim = 64
-num_heads = 4
-num_layers = 2
-dropout = 0.1
-sequence_length = 3  # Ensure it matches original
-
-# Instantiate the model
-model = TransformerModel(input_dim, embed_dim, num_heads, num_layers, dropout)
-
-# Load pre-trained weights
-model.load_state_dict(torch.load('transformer_model.pth'))
-
-# Set model to evaluation mode
-model.eval()
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
-
-# Load new dataset
-new_data = pd.read_csv('combined_data.csv')
-
-# Select same features
-features = ['positive', 'neutral', 'negative', 'score', 'Open']
-target = 'Close'
-
-# Normalize the data using the same MinMaxScaler
-scaler = MinMaxScaler()
-new_data[features + [target]] = scaler.fit_transform(new_data[features + [target]])
-
-# Create input sequences
-def create_input_sequence(data, features, sequence_length):
-    sequences = []
-    for i in range(len(data) - sequence_length):
-        seq = data[features].iloc[i:i + sequence_length].values
-        sequences.append(seq)
-    return torch.tensor(sequences, dtype=torch.float32)
-
-# Prepare input sequences
-input_sequences = create_input_sequence(new_data, features, sequence_length)
-# Perform inference
-with torch.no_grad():
-    predictions = model(input_sequences)
-
-# Convert predictions back to original scale (if necessary)
-predicted_prices = predictions.numpy().flatten()
-
-# Convert predicted prices to 2D numpy array before inverse transformation
-predicted_prices_2d = [[0, 0, 0, 0, 0, pred] for pred in predicted_prices]
-
-# Perform inverse transformation
-predicted_prices_real = scaler.inverse_transform(predicted_prices_2d)[:, -1]
-
-# Print the real predicted price
-print(f"Real Predicted Next Closing Price: {predicted_prices_real[-1]}")
-
-import matplotlib.pyplot as plt
-
-# Plot actual vs predicted
-plt.plot(new_data['Close'][sequence_length:].values, label="Actual")
-plt.plot(predicted_prices, label="Predicted")
-plt.legend()
-plt.show()
+    import torch
+    import torch.nn as nn
+    
+    # Transformer Model Definition
+    class TransformerModel(nn.Module):
+        def __init__(self, input_dim, embed_dim, num_heads, num_layers, dropout):
+            super(TransformerModel, self).__init__()
+            self.embedding = nn.Linear(input_dim, embed_dim)
+            self.positional_encoding = nn.Parameter(torch.zeros(1, sequence_length, embed_dim))
+            self.transformer = nn.TransformerEncoder(
+                nn.TransformerEncoderLayer(embed_dim, num_heads, dropout=dropout),
+                num_layers
+            )
+            self.fc = nn.Linear(embed_dim, 1)
+    
+        def forward(self, x):
+            x = self.embedding(x) + self.positional_encoding
+            x = self.transformer(x)
+            x = x.mean(dim=1)
+            return self.fc(x)
+    # Define Model Parameters (same as original training setup)
+    input_dim = 5  # Ensure it matches your feature count
+    embed_dim = 64
+    num_heads = 4
+    num_layers = 2
+    dropout = 0.1
+    sequence_length = 3  # Ensure it matches original
+    
+    # Instantiate the model
+    model = TransformerModel(input_dim, embed_dim, num_heads, num_layers, dropout)
+    
+    # Load pre-trained weights
+    model.load_state_dict(torch.load('transformer_model.pth'))
+    
+    # Set model to evaluation mode
+    model.eval()
+    import pandas as pd
+    from sklearn.preprocessing import MinMaxScaler
+    
+    # Load new dataset
+    new_data = pd.read_csv('combined_data.csv')
+    
+    # Select same features
+    features = ['positive', 'neutral', 'negative', 'score', 'Open']
+    target = 'Close'
+    
+    # Normalize the data using the same MinMaxScaler
+    scaler = MinMaxScaler()
+    new_data[features + [target]] = scaler.fit_transform(new_data[features + [target]])
+    
+    # Create input sequences
+    def create_input_sequence(data, features, sequence_length):
+        sequences = []
+        for i in range(len(data) - sequence_length):
+            seq = data[features].iloc[i:i + sequence_length].values
+            sequences.append(seq)
+        return torch.tensor(sequences, dtype=torch.float32)
+    
+    # Prepare input sequences
+    input_sequences = create_input_sequence(new_data, features, sequence_length)
+    # Perform inference
+    with torch.no_grad():
+        predictions = model(input_sequences)
+    
+    # Convert predictions back to original scale (if necessary)
+    predicted_prices = predictions.numpy().flatten()
+    
+    # Convert predicted prices to 2D numpy array before inverse transformation
+    predicted_prices_2d = [[0, 0, 0, 0, 0, pred] for pred in predicted_prices]
+    
+    # Perform inverse transformation
+    predicted_prices_real = scaler.inverse_transform(predicted_prices_2d)[:, -1]
+    
+    # Print the real predicted price
+    print(f"Real Predicted Next Closing Price: {predicted_prices_real[-1]}")
+    st.write(f"Real Predicted Next Closing Price: {predicted_prices_real[-1]}")
+    
+    import matplotlib.pyplot as plt
+    
+    # Plot actual vs predicted
+    plt.plot(new_data['Close'][sequence_length:].values, label="Actual")
+    plt.plot(predicted_prices, label="Predicted")
+    plt.legend()
+    plt.show()
 
