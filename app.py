@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 # Streamlit App Title
 st.title("Stock Sentiment Analysis & Prediction")
