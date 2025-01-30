@@ -149,7 +149,7 @@ if submit_button:
         # Display the latest 5 news articles
         st.subheader("📰 Latest 5 News Articles:")
         for i, row in latest_news.iterrows():
-            st.markdown(f"###{i+1}. {row['title']}")
+            st.markdown(f"### {i+1}. {row['title']}")
             st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
             st.write(f"📰 **Summary:** {row['detail']}")
             st.write("---")  # Divider for clarity
