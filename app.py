@@ -160,30 +160,12 @@ if submit_button:
         
         return positive, neutral, negative, score
         
-        # Assuming the text data is in the 'content' column
-        data['positive'], data['neutral'], data['negative'], data['score'] = zip(*data['combined_text'].apply(analyze_sentiment))
-        # Add entry count for each row
-        data['entry_count'] = 1
-        sentiment_data_path = "sentiment_analysis_results.csv"
-        data.to_csv(sentiment_data_path, index=False)
-
-        # Load the CSV file
-        file_path = "sentiment_analysis_results.csv" 
-        df = pd.read_csv(file_path)
-        
-        # Remove unnecessary columns
-        columns_to_remove = ['title', 'detail', 'combined_text']
-        df = df.drop(columns=[col for col in columns_to_remove if col in df.columns], errors='ignore')
-        
-        # Convert the date column to a proper datetime format, extracting only the date part
-        df['Date'] = pd.to_datetime(df['Date']).dt.date
-        
-        # Group by date and calculate the average for sentiment scores
-        aggregated_df = df.groupby('Date', as_index=False).mean()
-        
-        # Save the processed data to a new CSV file
-        processed_sentiment_analysis = "processed_sentiment_analysis.csv"
-        aggregated_df.to_csv(processed_sentiment_analysis, index=False)
+    # Assuming the text data is in the 'content' column
+    data['positive'], data['neutral'], data['negative'], data['score'] = zip(*data['combined_text'].apply(analyze_sentiment))
+    # Add entry count for each row
+    data['entry_count'] = 1
+    sentiment_data_path = "sentiment_analysis_results.csv"
+    data.to_csv(sentiment_data_path, index=False)
 
     # Streamlit App Title
     st.subheader("📊 Sentiment Scores of Latest 5 News Articles")
