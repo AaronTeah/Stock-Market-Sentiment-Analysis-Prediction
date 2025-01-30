@@ -127,7 +127,7 @@ if submit_button:
     initialize_csv(csv_file)
     
     # Scrape all pages (maximum 10 pages)
-    for page in range(0, 100, 10):  # Adjust the range based on your needs
+    for page in range(0, 50, 10):  # Adjust the range based on your needs
         scrape_page(page) 
 
     #############################Sentiment Analysis################################
@@ -184,7 +184,7 @@ if submit_button:
         df = df.drop_duplicates(subset=['title', 'detail'], keep='first')
     
         # Sort by date (latest first) and get the top 5 unique news
-        latest_news = df.sort_values(by='Date', ascending=False).head(5)
+        latest_news = df.sort_values(by='Date', ascending=False).head(3)
     
         # Display the latest 5 unique news articles with sentiment scores
         for i, row in latest_news.iterrows():
