@@ -130,8 +130,6 @@ if submit_button:
     for page in range(0, 100, 10):  # Adjust the range based on your needs
         scrape_page(page) 
 
-
-
     #############################Sentiment Analysis################################
     # Load the dataset
     file_path = 'scraped_articles.csv'
@@ -188,45 +186,24 @@ if submit_button:
         aggregated_df.to_csv(processed_sentiment_analysis, index=False)
 
     # Streamlit App Title
-    st.title("📢 Latest Stock Market News")
+    st.subheader("📊 Sentiment Scores of Latest 5 News Articles")
     
-    # File path of the uploaded CSV
-    csv_file_path = "scraped_articles.csv"
+    # Sort by date to get the latest news
+    data['Date'] = pd.to_datetime(data['Date'], errors='coerce')
+    data = data.sort_values(by='Date', ascending=False).head(5)
     
-    # Load CSV
-    try:
-        df = pd.read_csv(csv_file_path)
-    
-        # Convert 'Date' column to datetime (ensuring proper sorting)
-        df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
-    
-        # Remove duplicate articles based on 'title' and 'detail' columns
-        df = df.drop_duplicates(subset=['title', 'detail'], keep='first')
-    
-        # Sort by date (latest first) and get the top 5 latest unique news
-        latest_news = df.sort_values(by='Date', ascending=False).head(5)
-    
-        # Streamlit App Title
-        st.subheader("📊 Sentiment Scores of Latest 5 News Articles")
+    # Display the first 5 news articles along with their sentiment scores
+    for i, row in data.iterrows():
+        st.markdown(f"### {i+1}. {row['title']}")
+        st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
+        st.write(f"📰 **Summary:** {row['detail']}")
         
-        # Sort by date to get the latest news
-        data['Date'] = pd.to_datetime(data['Date'], errors='coerce')
-        data = data.sort_values(by='Date', ascending=False).head(5)
-        
-        # Display the first 5 news articles along with their sentiment scores
-        for i, row in data.iterrows():
-            st.markdown(f"### {i+1}. {row['title']}")
-            st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
-            st.write(f"📰 **Summary:** {row['detail']}")
-            
-            # Display Sentiment Scores
-            st.write(f"📈 **Positive Sentiment:** {row['positive']:.2f}")
-            st.write(f"⚖ **Neutral Sentiment:** {row['neutral']:.2f}")
-            st.write(f"📉 **Negative Sentiment:** {row['negative']:.2f}")
-            st.write(f"🧮 **Overall Sentiment Score:** {row['score']:.2f}")
-            st.write("---")  # Divider for clarity
+        # Display Sentiment Scores
+        st.write(f"📈 **Positive Sentiment:** {row['positive']:.2f}")
+        st.write(f"⚖ **Neutral Sentiment:** {row['neutral']:.2f}")
+        st.write(f"📉 **Negative Sentiment:** {row['negative']:.2f}")
+        st.write(f"🧮 **Overall Sentiment Score:** {row['score']:.2f}")
+        st.write("---")  # Divider for clarity
 
-    except Exception as e:
-        st.error(f"❌ Error loading CSV: {e}")
         
 #st.write(f"👍 **Positive:** `{row['positive']:.2f}` | 😐 **Neutral:** `{row['neutral']:.2f}` | 👎 **Negative:** `{row['negative']:.2f}`")
