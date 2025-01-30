@@ -236,7 +236,7 @@ if submit_button:
         else:
             # Reset index to make Date a column for merging
             stock_history.reset_index(inplace=True)
-            ##########################################################################################
+            ##################################Show the stock market trend##############################
             import matplotlib.pyplot as plt
             # Plot the stock market price
             st.subheader(f"📊 Stock Price Chart for {stock_code}")
