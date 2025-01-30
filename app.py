@@ -129,5 +129,32 @@ if submit_button:
     for page in range(0, 100, 10):  # Adjust the range based on your needs
         scrape_page(page) 
 
+    # Streamlit App Title
+    st.title("📢 Latest Stock Market News")
+    
+    # File path of the uploaded CSV
+    csv_file_path = "scraped_articles.csv"
+    
+    # Load CSV
+    try:
+        df = pd.read_csv(csv_file_path)
+    
+        # Convert 'Date' column to datetime for sorting (if not already formatted)
+        df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+    
+        # Sort by date (latest first) and get the top 5 latest news
+        latest_news = df.sort_values(by='Date', ascending=False).head(5)
+    
+        # Display the latest 5 news articles
+        st.subheader("📰 Latest 5 News Articles:")
+        for i, row in latest_news.iterrows():
+            st.markdown(f"### {i+1}. {row['title']}")
+            st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
+            st.write(f"📰 **Summary:** {row['detail']}")
+            st.write("---")  # Divider for clarity
+    
+    except Exception as e:
+        st.error(f"❌ Error loading CSV: {e}")
+
 
     
