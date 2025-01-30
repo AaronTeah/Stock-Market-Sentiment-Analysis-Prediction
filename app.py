@@ -20,7 +20,7 @@ if submit_button:
     st.success(f"You have selected: **{news_search}** with stock code **{stock_code}**")
     
     # You can now pass `news_search` and `stock_code` into your scraping and prediction functions.
-    st.write("Proceeding with data scraping and sentiment analysis...")
+    st.write("Proceeding with data scraping and sentiment analysis, it may takes more than 5 minutes...")
 
     #############################################Scraping##################################################
     duration_days = 10
@@ -184,7 +184,7 @@ if submit_button:
         df = df.drop_duplicates(subset=['title', 'detail'], keep='first')
     
         # Sort by date (latest first) and get the top 5 unique news
-        latest_news = df.sort_values(by='Date', ascending=False).head(3)
+        latest_news = df.sort_values(by='Date', ascending=False).head(5)
     
         # Display the latest 5 unique news articles with sentiment scores
         for i, row in latest_news.iterrows():
