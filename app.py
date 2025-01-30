@@ -23,7 +23,7 @@ if submit_button:
     st.write("Proceeding with data scraping and sentiment analysis...")
 
     #############################################Scraping##################################################
-    duration_days = 5
+    duration_days = 10
     import requests
     from bs4 import BeautifulSoup
     from datetime import datetime, timedelta
