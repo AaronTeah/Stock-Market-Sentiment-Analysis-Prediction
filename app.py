@@ -153,6 +153,7 @@ if submit_button:
             st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
             st.write(f"📰 **Summary:** {row['detail']}")
             st.write("---")  # Divider for clarity
+            i+1
     
     except Exception as e:
         st.error(f"❌ Error loading CSV: {e}")
