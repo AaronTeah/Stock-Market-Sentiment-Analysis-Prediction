@@ -8,7 +8,7 @@ with st.form(key="stock_form"):
     st.subheader("Enter Stock Information")
     
     # User inputs for stock name and code
-    stock_name = st.text_input("Stock Name (e.g., KLCI, Apple, Tesla)", value="KLCI")
+    news_search = st.text_input("Stock Name (e.g., KLCI, Apple, Tesla)", value="KLCI")
     stock_code = st.text_input("Stock Code (e.g., ^KLSE, AAPL, TSLA)", value="^KLSE")
     
     # Submit button
@@ -16,9 +16,9 @@ with st.form(key="stock_form"):
 
 # Process user input after submission
 if submit_button:
-    st.success(f"You have selected: **{stock_name}** with stock code **{stock_code}**")
+    st.success(f"You have selected: **{news_search}** with stock code **{stock_code}**")
     
-    # You can now pass `stock_name` and `stock_code` into your scraping and prediction functions.
+    # You can now pass `news_search` and `stock_code` into your scraping and prediction functions.
     st.write("Proceeding with data scraping and sentiment analysis...")
 
     #############################################Scraping##################################################
@@ -37,7 +37,7 @@ if submit_button:
     
     # Function to get user input and construct search URL
     def get_search_url():
-        stock_name = stock_name
+        stock_name = news_search
         encoded_stock = urllib.parse.quote(stock_name)  # Encode stock name for URL
         base_url = f"https://theedgemalaysia.com/news-search-results?keywords={encoded_stock}&to={today}&from={five_days_ago}&language=english&offset="
         return base_url, stock_name  # Return both URL and stock name for file naming
