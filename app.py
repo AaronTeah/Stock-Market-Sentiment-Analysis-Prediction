@@ -171,7 +171,7 @@ if submit_button:
     st.title("📰 Latest 5 News Articles with Sentiment Scores")
     
     # File path of the uploaded dataset
-    csv_file_path = "/mnt/data/sentiment_analysis_results.csv"
+    csv_file_path = "sentiment_analysis_results.csv"
     
     # Load the dataset
     try:
