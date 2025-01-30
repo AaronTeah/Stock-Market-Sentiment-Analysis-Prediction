@@ -237,54 +237,24 @@ if submit_button:
             # Reset index to make Date a column for merging
             stock_history.reset_index(inplace=True)
             ##################################Show the stock market trend##############################
-            import plotly.graph_objects as go
-            # Create an interactive candlestick chart using Plotly
-            st.subheader(f"📊 {stock_code} Stock Price Chart ({time_period})")
-            fig = go.Figure()
+            import matplotlib.pyplot as plt
+            # Plot the stock market price
+            st.subheader(f"📊 Stock Price Chart for {stock_code}")
+            fig, ax = plt.subplots(figsize=(10, 5))
+            ax.plot(stock_history["Date"], stock_history["Close"], label="Closing Price", linewidth=2)
+            ax.set_xlabel("Date")
+            ax.set_ylabel("Stock Price")
+            ax.set_title(f"{stock_code} Stock Market Trend")
+            ax.legend()
+            ax.grid()
 
-            # Add candlestick chart
-            fig.add_trace(go.Candlestick(
-                x=stock_history["Date"],
-                open=stock_history["Open"],
-                high=stock_history["High"],
-                low=stock_history["Low"],
-                close=stock_history["Close"],
-                name="Candlestick"
-            ))
-
-            # Customize layout
-            fig.update_layout(
-                title=f"{stock_code} Stock Market Trend",
-                xaxis_title="Date",
-                yaxis_title="Stock Price",
-                xaxis_rangeslider_visible=True,
-                template="plotly_dark"  # Dark theme for better visibility
-            )
-
-            # Show the interactive chart in Streamlit
-            st.plotly_chart(fig, use_container_width=True)
+            # Show the chart in Streamlit
+            st.pyplot(fig)
 
             # Display the latest stock data
             st.subheader("📃 Latest Stock Data")
-            st.dataframe(df.tail(5))  # Show the last 5 rows
-            # import matplotlib.pyplot as plt
-            # # Plot the stock market price
-            # st.subheader(f"📊 Stock Price Chart for {stock_code}")
-            # fig, ax = plt.subplots(figsize=(10, 5))
-            # ax.plot(stock_history["Date"], stock_history["Close"], label="Closing Price", linewidth=2)
-            # ax.set_xlabel("Date")
-            # ax.set_ylabel("Stock Price")
-            # ax.set_title(f"{stock_code} Stock Market Trend")
-            # ax.legend()
-            # ax.grid()
-
-            # # Show the chart in Streamlit
-            # st.pyplot(fig)
-
-            # # Display the latest stock data
-            # st.subheader("📃 Latest Stock Data")
-            # st.dataframe(stock_history.tail(5))  # Show the last 5 rows
-            # st.write("---")
+            st.dataframe(stock_history.tail(5))  # Show the last 5 rows
+            st.write("---")
             ##########################################################################################
             stock_history['Date'] = stock_history['Date'].dt.date  # Ensure Date is in the correct format
             print("Stock market data fetched successfully.")
@@ -387,7 +357,6 @@ if submit_button:
     # Print the real predicted price
     print(f"Real Predicted Next Closing Price: {predicted_prices_real[-1]}")
     st.subheader(f"💹Predicted Next Closing Price: RM{predicted_prices_real[-1]:.2f}")
-    st.write(f"🧮 **Overall Sentiment Score:** {row['score']:.5f}")
     
     import matplotlib.pyplot as plt
     
