@@ -140,23 +140,24 @@ if submit_button:
     try:
         df = pd.read_csv(csv_file_path)
     
-        # Convert 'Date' column to datetime for sorting (if not already formatted)
+        # Convert 'Date' column to datetime (ensuring proper sorting)
         df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
     
-        # Sort by date (latest first) and get the top 5 latest news
+        # Remove duplicate articles based on 'title' and 'detail' columns
+        df = df.drop_duplicates(subset=['title', 'detail'], keep='first')
+    
+        # Sort by date (latest first) and get the top 5 latest unique news
         latest_news = df.sort_values(by='Date', ascending=False).head(5)
     
         # Display the latest 5 news articles
-        st.subheader("📰 Latest 5 News Articles:")
+        st.subheader("📰 Latest 5 Unique News Articles:")
         for i, row in latest_news.iterrows():
             st.markdown(f"### {i+1}. {row['title']}")
             st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
             st.write(f"📰 **Summary:** {row['detail']}")
             st.write("---")  # Divider for clarity
-
     
     except Exception as e:
         st.error(f"❌ Error loading CSV: {e}")
-
 
     
