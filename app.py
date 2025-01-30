@@ -199,3 +199,64 @@ if submit_button:
     
     except Exception as e:
         st.error(f"❌ Error loading CSV: {e}")
+
+    # Load the CSV file
+    file_path = "sentiment_analysis_results.csv" 
+    df = pd.read_csv(file_path)
+    
+    # Remove unnecessary columns
+    columns_to_remove = ['title', 'detail', 'combined_text']
+    df = df.drop(columns=[col for col in columns_to_remove if col in df.columns], errors='ignore')
+    
+    # Convert the date column to a proper datetime format, extracting only the date part
+    df['Date'] = pd.to_datetime(df['Date']).dt.date
+    
+    # Group by date and calculate the average for sentiment scores
+    aggregated_df = df.groupby('Date', as_index=False).mean()
+    
+    # Save the processed data to a new CSV file
+    processed_sentiment_analysis = "processed_sentiment_analysis.csv"
+    aggregated_df.to_csv(processed_sentiment_analysis, index=False)
+
+####################Get the stock data################################
+    import yfinance as yf
+    # Load the sentiment analysis output
+    try:
+        sentiment_data = pd.read_csv(processed_sentiment_analysis)
+        print("Sentiment analysis data loaded successfully.")
+    except Exception as e:
+        print(f"Error loading sentiment analysis data: {e}")
+    
+    try:
+        stock_data = yf.Ticker(stock_code)
+        stock_history = stock_data.history(period="1mo")  # Fetch last month's data
+    
+        if stock_history.empty:
+            print(f"No stock data found for stock code: {stock_code}")
+        else:
+            # Reset index to make Date a column for merging
+            stock_history.reset_index(inplace=True)
+            stock_history['Date'] = stock_history['Date'].dt.date  # Ensure Date is in the correct format
+            print("Stock market data fetched successfully.")
+    except Exception as e:
+        print(f"Error fetching stock market data: {e}")
+    
+    # Merge sentiment analysis data with stock market data
+    try:
+        # Convert sentiment data date column to datetime if available
+        if 'Date' in sentiment_data.columns:
+            sentiment_data['Date'] = pd.to_datetime(sentiment_data['Date']).dt.date
+    
+        # Perform an inner join on the 'Date' column
+        combined_data = pd.merge(sentiment_data, stock_history, on='Date', how='inner')
+        combined_data = combined_data.drop(columns=['entry_count', 'High', 'Low', 'Volume', 'Dividends', 'Stock Splits'])
+        print("Data combined successfully.")
+    
+        # Save combined data to a new file
+        combined_data_path = f"combined_data.csv"
+        combined_data.to_csv(combined_data_path, index=False)
+        print(f"Combined data saved to {combined_data_path}.")
+    
+    except Exception as e:
+        print(f"Error combining data: {e}")
+
