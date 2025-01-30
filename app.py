@@ -168,24 +168,36 @@ if submit_button:
     data.to_csv(sentiment_data_path, index=False)
 
     # Streamlit App Title
-    st.subheader("📊 Sentiment Scores of Latest 5 News Articles")
+    st.title("📰 Latest 5 News Articles with Sentiment Scores")
     
-    # Sort by date to get the latest news
-    data['Date'] = pd.to_datetime(data['Date'], errors='coerce')
-    data = data.sort_values(by='Date', ascending=False).head(5)
+    # File path of the uploaded dataset
+    csv_file_path = "sentiment_analysis_results.csv"
     
-    # Display the first 5 news articles along with their sentiment scores
-    for i, row in data.iterrows():
-        st.markdown(f"### {i+1}. {row['title']}")
-        st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
-        st.write(f"📰 **Summary:** {row['detail']}")
-        
-        # Display Sentiment Scores
-        st.write(f"📈 **Positive Sentiment:** {row['positive']:.2f}")
-        st.write(f"⚖ **Neutral Sentiment:** {row['neutral']:.2f}")
-        st.write(f"📉 **Negative Sentiment:** {row['negative']:.2f}")
-        st.write(f"🧮 **Overall Sentiment Score:** {row['score']:.2f}")
-        st.write("---")  # Divider for clarity
+    # Load the dataset
+    try:
+        df = pd.read_csv(csv_file_path)
+    
+        # Convert 'Date' column to datetime format for sorting
+        df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+    
+        # Sort the news by date (latest first) and get the top 5
+        latest_news = df.sort_values(by='Date', ascending=False).head(5)
+    
+        # Display the latest 5 news articles with sentiment scores
+        for i, row in latest_news.iterrows():
+            st.markdown(f"### {i+1}. {row['title']}")
+            st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
+            st.write(f"📰 **Summary:** {row['detail']}")
+            
+            # Show sentiment scores
+            st.write(f"📈 **Positive Sentiment:** {row['positive']:.2f}")
+            st.write(f"⚖ **Neutral Sentiment:** {row['neutral']:.2f}")
+            st.write(f"📉 **Negative Sentiment:** {row['negative']:.2f}")
+            st.write(f"🧮 **Overall Sentiment Score:** {row['score']:.2f}")
+            st.write("---")  # Divider for clarity
+    
+    except Exception as e:
+        st.error(f"❌ Error loading CSV: {e}")
 
         
 #st.write(f"👍 **Positive:** `{row['positive']:.2f}` | 😐 **Neutral:** `{row['neutral']:.2f}` | 👎 **Negative:** `{row['negative']:.2f}`")
