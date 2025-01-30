@@ -356,7 +356,8 @@ if submit_button:
     
     # Print the real predicted price
     print(f"Real Predicted Next Closing Price: {predicted_prices_real[-1]}")
-    st.subheader(f"💹Real Predicted Next Closing Price: RM{predicted_prices_real[-1]}")
+    st.subheader(f"💹Predicted Next Closing Price: RM{predicted_prices_real[-1]:.2f}")
+    st.write(f"🧮 **Overall Sentiment Score:** {row['score']:.5f}")
     
     import matplotlib.pyplot as plt
     
