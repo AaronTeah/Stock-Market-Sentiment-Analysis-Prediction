@@ -23,7 +23,7 @@ if submit_button:
     st.write("Proceeding with data scraping and sentiment analysis...")
 
     #############################################Scraping##################################################
-    duration_days = 30
+    duration_days = 5
     import requests
     from bs4 import BeautifulSoup
     from datetime import datetime, timedelta
@@ -193,14 +193,9 @@ if submit_button:
             st.write(f"📰 **Summary:** {row['detail']}")
             
             # Show sentiment scores
-            st.write(f"📈 **Positive Sentiment:** {row['positive']:.2f}")
-            st.write(f"⚖ **Neutral Sentiment:** {row['neutral']:.2f}")
-            st.write(f"📉 **Negative Sentiment:** {row['negative']:.2f}")
-            st.write(f"🧮 **Overall Sentiment Score:** {row['score']:.2f}")
+            st.write(f"👍 **Positive:** `{row['positive']:.5f}` | 😐 **Neutral:** `{row['neutral']:.5f}` | 👎 **Negative:** `{row['negative']:.5f}`")
+            st.write(f"🧮 **Overall Sentiment Score:** {row['score']:.5f}")
             st.write("---")  # Divider for clarity
     
     except Exception as e:
         st.error(f"❌ Error loading CSV: {e}")
-
-        
-#st.write(f"👍 **Positive:** `{row['positive']:.2f}` | 😐 **Neutral:** `{row['neutral']:.2f}` | 👎 **Negative:** `{row['negative']:.2f}`")
