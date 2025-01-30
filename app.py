@@ -171,7 +171,7 @@ if submit_button:
     st.title("📰 Latest 5 News Articles with Sentiment Scores")
     
     # File path of the uploaded dataset
-    csv_file_path = "sentiment_analysis_results.csv"
+    csv_file_path = "/mnt/data/sentiment_analysis_results.csv"
     
     # Load the dataset
     try:
@@ -180,10 +180,13 @@ if submit_button:
         # Convert 'Date' column to datetime format for sorting
         df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
     
-        # Sort the news by date (latest first) and get the top 5
+        # Remove duplicate articles based on 'title' and 'detail'
+        df = df.drop_duplicates(subset=['title', 'detail'], keep='first')
+    
+        # Sort by date (latest first) and get the top 5 unique news
         latest_news = df.sort_values(by='Date', ascending=False).head(5)
     
-        # Display the latest 5 news articles with sentiment scores
+        # Display the latest 5 unique news articles with sentiment scores
         for i, row in latest_news.iterrows():
             st.markdown(f"### {i+1}. {row['title']}")
             st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
