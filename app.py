@@ -130,35 +130,7 @@ if submit_button:
     for page in range(0, 100, 10):  # Adjust the range based on your needs
         scrape_page(page) 
 
-    # Streamlit App Title
-    st.title("📢 Latest Stock Market News")
-    
-    # File path of the uploaded CSV
-    csv_file_path = "scraped_articles.csv"
-    
-    # Load CSV
-    try:
-        df = pd.read_csv(csv_file_path)
-    
-        # Convert 'Date' column to datetime (ensuring proper sorting)
-        df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
-    
-        # Remove duplicate articles based on 'title' and 'detail' columns
-        df = df.drop_duplicates(subset=['title', 'detail'], keep='first')
-    
-        # Sort by date (latest first) and get the top 5 latest unique news
-        latest_news = df.sort_values(by='Date', ascending=False).head(5)
-    
-        # Display the latest 5 news articles
-        st.subheader("📰 Latest 5 Unique News Articles:")
-        for i, row in latest_news.iterrows():
-            st.markdown(f"### {i+1}. {row['title']}")
-            st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
-            st.write(f"📰 **Summary:** {row['detail']}")
-            st.write("---")  # Divider for clarity
-    
-    except Exception as e:
-        st.error(f"❌ Error loading CSV: {e}")
+
 
     #############################Sentiment Analysis################################
     # Load the dataset
@@ -212,12 +184,41 @@ if submit_button:
         aggregated_df = df.groupby('Date', as_index=False).mean()
         
         # Save the processed data to a new CSV file
-        processed_sentiment_analysis = "/content/drive/MyDrive/NLP Project/processed_sentiment_analysis.csv"
+        processed_sentiment_analysis = "processed_sentiment_analysis.csv"
         aggregated_df.to_csv(processed_sentiment_analysis, index=False)
-        
-        # Display the processed dataframe
-        st.write(aggregated_df.head())  # Display the first few rows
-        st.write(f"Processed CSV file saved at: {processed_sentiment_analysis}")
 
+    # Streamlit App Title
+    st.title("📢 Latest Stock Market News")
+    
+    # File path of the uploaded CSV
+    csv_file_path = "scraped_articles.csv"
+    
+    # Load CSV
+    try:
+        df = pd.read_csv(csv_file_path)
+    
+        # Convert 'Date' column to datetime (ensuring proper sorting)
+        df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+    
+        # Remove duplicate articles based on 'title' and 'detail' columns
+        df = df.drop_duplicates(subset=['title', 'detail'], keep='first')
+    
+        # Sort by date (latest first) and get the top 5 latest unique news
+        latest_news = df.sort_values(by='Date', ascending=False).head(5)
+    
+        # Display the latest 5 news articles
+        st.subheader("📰 Latest 5 News Articles with Sentiment Scores")
+        
+        for i, row in latest_news.iterrows():
+            st.markdown(f"### {i+1}. {row['title']}")
+            st.write(f"📅 **Date:** {row['Date'].strftime('%Y-%m-%d %H:%M:%S')}")
+            st.write(f"📰 **Summary:** {row['detail']}")
+            st.write(f"💬 **Sentiment Score:** `{row['score']:.4f}`")
+            st.write(f"👍 **Positive:** `{row['positive']:.2f}` | 😐 **Neutral:** `{row['neutral']:.2f}` | 👎 **Negative:** `{row['negative']:.2f}`")
+            st.write("---")  # Divider between articles
+
+
+    except Exception as e:
+        st.error(f"❌ Error loading CSV: {e}")
         
 
